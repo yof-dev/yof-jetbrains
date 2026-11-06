@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 // yof for JetBrains IDEs: IntelliJ Platform Gradle Plugin 2.x, Kotlin. The yof CLI is bundled as a resource
@@ -51,9 +52,13 @@ intellijPlatform {
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
     }
+    // Fixed IDE versions, not recommended(): from 2025.3 JetBrains ships no separate Community edition, so
+    // recommended() asked for an ideaIC-2025.3 that does not exist and the verifier could not start.
+    // The oldest supported build (since-build 241) and the last Community release.
     pluginVerification {
         ides {
-            recommended()
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.1.7")
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2.4")
         }
     }
 }
