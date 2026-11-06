@@ -1,0 +1,55 @@
+# Release for github.com/yof-dev/yof-jetbrains. Runs only when a version tag (v1.2.3) is pushed, never on a pull
+# request: tests, build, sign and publish to the JetBrains Marketplace, then a GitHub release with the signed zip.
+#
+# Secrets: JETBRAINS_PUBLISH_TOKEN (JetBrains Marketplace permanent token), and for plugin signing CERTIFICATE_CHAIN,
+# PRIVATE_KEY and PRIVATE_KEY_PASSWORD (the certificate chain and the private key as PEM text, and its password).
+name: release
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write   # the GitHub release
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: marketplaces
+    steps:
+      - uses: actions/checkout@v4
+      - name: The tag matches gradle.properties
+        env:
+          TAG: ${{ github.ref_name }}
+        run: test "${TAG#v}" = "$(sed -n 's/^pluginVersion *= *//p' gradle.properties)"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: The CLI this plugin bundles
+        run: npm install --no-save --no-audit --no-fund --no-package-lock "@yof/cli@$(sed -n 's/^yofCliVersion *= *//p' gradle.properties)"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+      - name: Test, build, sign and publish
+        env:
+          PUBLISH_TOKEN: ${{ secrets.JETBRAINS_PUBLISH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+        run: gradle test verifyPlugin signPlugin publishPlugin
+      - name: GitHub release with the signed plugin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          v="${TAG#v}"
+          awk -v v="$v" '$0 ~ "^## "v"( |$)" {on=1; next} on && /^## / {exit} on {print}' CHANGELOG.md > notes.md
+          gh release create "$TAG" build/distributions/*-signed.zip --title "$TAG" --notes-file notes.md

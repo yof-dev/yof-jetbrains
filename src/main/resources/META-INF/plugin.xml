@@ -1,0 +1,33 @@
+<idea-plugin>
+    <id>io.yof.jetbrains</id>
+    <name>yof</name>
+    <vendor url="https://yof.io">yof</vendor>
+    <description><![CDATA[
+    <p>Leaked keys and made-up packages, marked in the editor when you save, each with a plain explanation and a
+    prompt to paste into the AI assistant that wrote the code. Runs the open-source yof CLI on your machine: rules only,
+    no account, no telemetry, and no network call unless you turn on package lookups.</p>
+    <p><b>yof attack</b> (Tools menu) tests your own running app with your own test accounts, in the background, after
+    you confirm.</p>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="yof" displayType="BALLOON"/>
+        <externalAnnotator language="" implementationClass="io.yof.jetbrains.YofAnnotator"/>
+        <toolWindow id="yof" anchor="bottom" factoryClass="io.yof.jetbrains.YofToolWindowFactory" canCloseContents="false"/>
+        <applicationConfigurable parentId="tools" instance="io.yof.jetbrains.YofConfigurable" id="io.yof.jetbrains.settings" displayName="yof"/>
+    </extensions>
+
+    <applicationListeners>
+        <listener class="io.yof.jetbrains.YofSaveListener" topic="com.intellij.openapi.fileEditor.FileDocumentManagerListener"/>
+    </applicationListeners>
+
+    <actions>
+        <group id="io.yof.jetbrains.menu" text="yof" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="io.yof.jetbrains.check" class="io.yof.jetbrains.YofCheckAction" text="Check This Project" description="Run yof check on the project now"/>
+            <action id="io.yof.jetbrains.attack" class="io.yof.jetbrains.YofAttackAction" text="Attack My App (yof attack)" description="Run yof attack against the address in Settings, in the background"/>
+        </group>
+    </actions>
+</idea-plugin>

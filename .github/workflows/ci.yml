@@ -1,0 +1,37 @@
+# CI for github.com/yof-dev/yof-jetbrains: unit tests, the plugin build and the JetBrains plugin verifier.
+# Publishes nothing; the built zip is kept as a run artifact (for the first, manual Marketplace upload).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: The CLI this plugin bundles
+        run: npm install --no-save --no-audit --no-fund --no-package-lock "@yof/cli@$(sed -n 's/^yofCliVersion *= *//p' gradle.properties)"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+      - run: gradle test buildPlugin verifyPlugin
+      # The unsigned plugin zip, kept for 30 days: JetBrains wants the FIRST version uploaded by hand
+      # (plugins.jetbrains.com > Upload plugin); release.yml signs and publishes every version after that.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yof-jetbrains-plugin
+          path: build/distributions/*.zip
+          retention-days: 30
