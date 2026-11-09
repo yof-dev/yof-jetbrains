@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- yof: the dog from the yof mark (apps/app/public/pwa/yof-icon.svg), scaled into 40 x 40. Light IDE theme. -->
+  <g transform="translate(-9.44 -8.03) scale(0.1192)">
+    <path d="M228 309H300C346 309 373 272 382 231C383 225 380 222 374 220L337 207C319 177 293 160 258 160H180C167 160 159 164 153 173L120 228C106 252 110 282 136 284C162 286 186 274 188 250L190 162" fill="none" stroke="#27272a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="258" cy="212" r="13" fill="#16a34a"/>
+  </g>
+</svg>

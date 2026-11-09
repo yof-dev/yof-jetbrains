@@ -28,7 +28,7 @@ class YofSaveListener : FileDocumentManagerListener {
 
 class YofCheckAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        e.project?.service<YofProjectService>()?.checkNow()
+        e.project?.service<YofProjectService>()?.checkNow(manual = true)
     }
 }
 

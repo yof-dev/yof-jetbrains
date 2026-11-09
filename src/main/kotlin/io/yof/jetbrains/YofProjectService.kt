@@ -1,6 +1,8 @@
 package io.yof.jetbrains
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.ide.BrowserUtil
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
@@ -37,7 +39,8 @@ class YofProjectService(private val project: Project) : Disposable {
         alarm.addRequest({ ApplicationManager.getApplication().invokeLater { checkNow() } }, delayMs)
     }
 
-    fun checkNow() {
+    /** `manual`: the person ran Check This Project; when it finishes, the next steps are offered (YofNextSteps). */
+    fun checkNow(manual: Boolean = false) {
         val base = project.basePath ?: return
         running?.cancel()   // a newer check replaces the older one
         val o = YofSettings.get().state
@@ -54,6 +57,7 @@ class YofProjectService(private val project: Project) : Disposable {
                     val now = list.count { it.level == Level.ERROR }
                     val week = list.count { it.level == Level.WARNING }
                     append(if (now + week == 0) "[check] nothing to fix." else "[check] $now to fix now, $week to fix this week.")
+                    if (manual) offerNextSteps(list.filter { it.level != Level.INFORMATION })
                     ApplicationManager.getApplication().invokeLater { if (!project.isDisposed) DaemonCodeAnalyzer.getInstance(project).restart() }
                 } catch (e: CheckOutputException) {
                     append("[check] ${e.message}")
@@ -62,6 +66,17 @@ class YofProjectService(private val project: Project) : Disposable {
 
             override fun onFinished() { running = null }
         })
+    }
+
+    private fun offerNextSteps(open: List<Finding>) {
+        val text = if (open.isEmpty()) "yof: nothing to fix in this project. A signed report covers your live app too."
+        else "yof: ${open.size} to fix. Paste the fix prompt into your AI assistant, or get a signed report for your app."
+        val n = NotificationGroupManager.getInstance().getNotificationGroup("yof").createNotification(text, NotificationType.INFORMATION)
+        val prompt = YofNextSteps.combinedPrompt(open.map { it.fixPrompt })
+        if (prompt.isNotEmpty()) n.addAction(NotificationAction.createSimple("Copy fix prompt") { YofNextSteps.copy(prompt) })
+        n.addAction(NotificationAction.createSimple(YofNextSteps.signedReportLabel()) { BrowserUtil.browse(YofNextSteps.SIGNED_REPORT_URL) })
+        n.addAction(NotificationAction.createSimple(YofNextSteps.patchLabel()) { BrowserUtil.browse(YofNextSteps.PATCH_URL) })
+        n.notify(project)
     }
 
     fun append(line: String) {

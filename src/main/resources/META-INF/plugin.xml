@@ -3,11 +3,14 @@
     <name>yof</name>
     <vendor url="https://yof.io">yof</vendor>
     <description><![CDATA[
-    <p>Leaked keys and made-up packages, marked in the editor when you save, each with a plain explanation and a
-    prompt to paste into the AI assistant that wrote the code. Runs the open-source yof CLI on your machine: rules only,
-    no account, no telemetry, and no network call unless you turn on package lookups.</p>
+    <p>Security checks for code you write with AI builders and AI assistants. Leaked secrets and made-up packages are
+    marked in the editor when you save, each with a plain explanation and a fix prompt to paste into the AI assistant
+    that wrote the code. Runs the open-source yof CLI on your machine: rules only, no account, no telemetry, and no
+    network call unless you turn on package lookups.</p>
     <p><b>yof attack</b> (Tools menu) tests your own running app with your own test accounts, in the background, after
     you confirm.</p>
+    <p>After a check you start: <b>Copy fix prompt</b>, <b>Get a signed report</b> (a report of your app with an SBOM)
+    and <b>Turn on Patch</b>. The last two only open app.yof.io in your browser.</p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
@@ -28,6 +31,8 @@
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <action id="io.yof.jetbrains.check" class="io.yof.jetbrains.YofCheckAction" text="Check This Project" description="Run yof check on the project now"/>
             <action id="io.yof.jetbrains.attack" class="io.yof.jetbrains.YofAttackAction" text="Attack My App (yof attack)" description="Run yof attack against the address in Settings, in the background"/>
+            <action id="io.yof.jetbrains.signedReport" class="io.yof.jetbrains.YofSignedReportAction" text="Get a Signed Report (Opens Soon)" description="Open app.yof.io to order a signed report of your app"/>
+            <action id="io.yof.jetbrains.patch" class="io.yof.jetbrains.YofPatchAction" text="Turn On Patch (Opens Soon)" description="Open Patch on app.yof.io"/>
         </group>
     </actions>
 </idea-plugin>

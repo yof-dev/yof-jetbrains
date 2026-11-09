@@ -10,6 +10,7 @@ It runs the open-source [yof CLI](https://github.com/yof-dev/yof), bundled with 
 - **In the editor**, findings show as errors (fix now) and warnings (fix this week), with the masked value and what can happen.
 - **Quick fix** (Alt+Enter): "yof: Copy the fix prompt for your AI assistant". It carries the masked value only.
 - **The yof tool window** shows what each check and attack said.
+- **After Tools > yof > Check This Project**: Copy fix prompt (every open finding's prompt, numbered), Get a signed report and Turn on Patch. The last two only open app.yof.io in your browser and read "(opens soon)" until ordering opens. A [sample report](https://yof.io/sample) of a made-up site shows what a signed report holds, SBOM included.
 - **Tools > yof > Attack My App** runs `yof attack` against your own app (by default `http://localhost:3000`) with your `.yof/attack.json`, after you confirm in a notification. It runs in the background and you can cancel it.
 
 ## Private by default
@@ -31,4 +32,4 @@ gradle runIde                          # a sandbox IDE with the plugin loaded
 
 ## Licence
 
-Apache 2.0. Security reports: security@mondaily.com (see SECURITY.md).
+Apache 2.0. Security reports: security@yof.io (see SECURITY.md).
