@@ -1,3 +1,22 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/yof-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/assets/yof-logo-light.svg">
+    <img alt="yof" src=".github/assets/yof-logo-light.svg" width="220">
+  </picture>
+</p>
+
+<p align="center"><strong>Security checks for apps you build with AI</strong></p>
+
+<p align="center">Catch leaked keys, risky or made-up packages and access holes between accounts before you ship. Free and open source.</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@yof/cli"><img alt="@yof/cli on npm" src="https://img.shields.io/npm/v/@yof/cli?label=%40yof%2Fcli"></a>
+  <a href="./LICENSE"><img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-blue"></a>
+  <a href="https://yof.io/benchmark"><img alt="Benchmark" src="https://img.shields.io/badge/benchmark-results-36c98a"></a>
+  <a href="https://yof.io"><img alt="yof.io" src="https://img.shields.io/badge/web-yof.io-0c0d11"></a>
+</p>
+
 # yof for JetBrains IDEs
 
 Leaked keys and made-up packages, marked in the editor when you save, each with a plain explanation and a quick fix that copies a prompt for the AI assistant that wrote the code. Works in IntelliJ IDEA, WebStorm, PyCharm, GoLand and the other JetBrains IDEs (2024.1 and newer).
