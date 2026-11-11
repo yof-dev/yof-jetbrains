@@ -22,3 +22,18 @@ masked values, so check that no full key is visible anywhere on screen, includin
 
 Do not show: accepted risks or the scan count (not in the JetBrains plugin yet), a paid order, or any other company's
 logo or product name in the window title or the tabs.
+
+## Taking them on GitHub Actions
+
+No local IDE needed. In github.com/yof-dev/yof-jetbrains open Actions > screenshots > Run workflow (or
+`gh workflow run screenshots.yml -R yof-dev/yof-jetbrains`). It runs only when started by hand and uses no secrets.
+The run starts IntelliJ IDEA Community 2024.1.7 with this plugin on a virtual 1280 x 800 screen (Xvfb), opens a small
+demo project it makes on the spot (`src/config.ts` with a Stripe-style key made up for the picture, never a real one),
+and drives the IDE through JetBrains' Remote-Robot (`gradle runIdeForUiTests` plus the driver in `screenshots/`). It
+switches to the Light theme, sets the editor font to 14 and folds every key in the editor down to its first 12
+characters, the way yof masks it. Allow 15 to 25 minutes.
+
+Download the artifact `listing-screenshots`: `01-leaked-key-in-editor.png`, `02-fix-prompt-quick-fix.png` and
+`03-check-and-next-steps.png`, each 1280 x 800, plus `driver-log.txt`. A scene that fails leaves a `debug-*.png` of
+the screen instead, and the run is marked failed; the IDE's own logs are in the `ide-logs` artifact. Look at every
+picture before uploading it: the rules above still apply.

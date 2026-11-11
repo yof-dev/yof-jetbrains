@@ -63,6 +63,35 @@ intellijPlatform {
     }
 }
 
+// The IDE the listing screenshots are taken in (.github/workflows/screenshots.yml, see SCREENSHOTS.md): the plugin
+// plus JetBrains' Robot Server, which the driver in screenshots/ talks to on 127.0.0.1:8082. Never run by CI or a
+// release. YOF_UI_PROJECT names a folder to open at start.
+val uiTestProject = providers.environmentVariable("YOF_UI_PROJECT")
+
+intellijPlatformTesting {
+    runIde {
+        register("runIdeForUiTests") {
+            task {
+                jvmArgumentProviders += CommandLineArgumentProvider {
+                    listOf(
+                        "-Drobot-server.port=8082",
+                        "-Dide.mac.message.dialogs.as.sheets=false",
+                        "-Djb.privacy.policy.text=<!--999.999-->",
+                        "-Djb.consents.confirmation.enabled=false",
+                        "-Didea.trust.all.projects=true",
+                        "-Dide.show.tips.on.startup.default.value=false",
+                        "-Dide.experimental.ui=true",
+                    )
+                }
+                argumentProviders += CommandLineArgumentProvider { listOfNotNull(uiTestProject.orNull) }
+            }
+            plugins {
+                robotServerPlugin("0.11.23")
+            }
+        }
+    }
+}
+
 val yofCli = layout.projectDirectory.file("node_modules/@yof/cli/dist/bin.cjs")
 
 val yofCliVersion = providers.gradleProperty("yofCliVersion")
